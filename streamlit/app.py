@@ -49,7 +49,7 @@ def authenticate(decrypted_credential, wallet):
 
 # Main application
 def main():
-    st.title('QR Code Decoder')
+    st.title('NOTTS ID')
     
     # Get the data from the URL query parameter
     query_params = get_query_params()
@@ -57,17 +57,26 @@ def main():
     data = bytes(data[2:-1], 'utf-8')
     
     # Display the decoded data
-    st.header('Decoded Data')
+    st.header('Select information to share')
     
-    # Allow user to input a key
-    key = st.text_input("Enter Key:", "")
-    key = bytes(key, 'utf-8')
+    # # Allow user to input a key
+    # key = st.text_input("Enter Key:", "")
+    # key = bytes(key, 'utf-8')
     
+    # Sharing Data
     wallet = st.number_input('Enter wallet number:',1)
+    useName = st.checkbox("Name")
+    useStudentId = st.checkbox("Student ID")
+    useCourse = st.checkbox("Course")
     
     # Read JSON file and parse as dictionary
-    file_path = f"wallets/wallet{wallet}.json"
-    s1 = read_json_file(file_path)
+    file_path_wallet = f"wallets/wallet{wallet}.json"
+    s1 = read_json_file(file_path_wallet)
+    
+    # Read the byte string from the file
+    file_path_key = f"key/key.bin"
+    with open(file_path_key, 'rb') as file:
+        key = file.read()
     
     # Process the data with the key
     if st.button("Process Data"):
@@ -76,7 +85,17 @@ def main():
         
         decrypted_credential = verify_credential(data, key)
         result = authenticate(decrypted_credential, s1)
-        st.json(result)
+        
+        # Filtered dictionary
+        all_keys = result.keys()
+        keys_to_use = [False, useName, useStudentId, useCourse]
+        filtered_dict = {key: value for key, value in result.items() if keys_to_use[list(all_keys).index(key)]}
+        
+        # Convert filtered dictionary to JSON
+        json_data = json.dumps(filtered_dict)
+        
+        st.header('Result')
+        st.json(json_data)
         
 
 
