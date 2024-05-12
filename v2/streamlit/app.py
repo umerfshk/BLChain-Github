@@ -15,7 +15,7 @@ def initialize_did():
         
     student = DID("student")
     uni = DID('university')
-    vc_data = {"name": "Bob", "age": 30}
+    vc_data = {"name": "Fred Smith", "studentId": "UNINotts-183765", "degree": "PhD Engineering", "status": "Student"}
     vc = uni.issue_vc(student.did, vc_data)
     student.store_vc_in_wallet('degree', vc)
     return student
