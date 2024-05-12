@@ -1,10 +1,18 @@
 
 import streamlit as st
 import requests
+import socket
 import urllib.parse
 from did import DID
 
+# Write the network URL 
+ip = socket.gethostbyname(socket.gethostname())
+port = 8501  # The port you choose to run Streamlit on
+with open("../streamlit_url.txt", "w") as f:
+    f.write(f"http://{ip}:{port}")
+
 def initialize_did():
+        
     student = DID("student")
     uni = DID('university')
     vc_data = {"name": "Bob", "age": 30}

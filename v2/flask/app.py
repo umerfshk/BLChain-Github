@@ -5,10 +5,15 @@ import qrcode
 app = Flask(__name__)
 vendor_did = DID('vendor')
 
+def get_streamlit_url():
+    with open("../streamlit_url.txt", "r") as f:
+        return f.read()
+
 @app.route('/request-access')
 def generate_qr():
     # Generate the data string to be encoded in the QR code
-    address="http://10.132.198.247:8501"
+    address=get_streamlit_url()
+    # address="http://10.132.198.247:8501"
     did = f"{vendor_did.did}".replace(":", "_")
     qr_data = f'{address}/?did={did}'
 
@@ -32,7 +37,7 @@ def generate_qr():
 def verify_vp():
     data = request.json
     response = data.get('response')
-
+    
     if response == 'fail':
         # Logic for handling failed response
         return jsonify({"message": "Holder rejected access"}), 200
@@ -44,7 +49,4 @@ def verify_vp():
         return jsonify({"error": "Invalid response"}), 400
     
 if __name__ == '__main__':
-    app.run(debug=True)
-
-if __name__ == "__main__":
     app.run(debug=True)
